@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة الندا للأعسال | أصالة وجودة</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* تنسيق المودال (نافذة بيانات الاستلام) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.5);
+            align-items: center; 
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #d4a373; /* لون ذهبي عسلي مناسب للهوية الجديدة */
+            margin-bottom: 15px;
+            display: block;
+        }
+        .btn-add {
+            background-color: #d4a373; /* لون عسلي دافئ */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .btn-add:hover {
+            background-color: #bfa360;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-truck"></i> بيانات الشحن والاستلام</h2>
+            <p>من فضلك أدخل بياناتك لتأكيد طلب العسل</p>
+            <form id="orderForm">
+                <div class="form-group">
+                    <label>الاسم بالكامل:</label>
+                    <input type="text" id="userName" placeholder="مثال: محمد أحمد" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الموبايل:</label>
+                    <input type="tel" id="userPhone" placeholder="01xxxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label>المحافظة:</label>
+                    <select id="userCity">
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="أخرى">محافظة أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>العنوان بالتفصيل:</label>
+                    <input type="text" id="userAddress" placeholder="اسم الشارع، رقم العمارة..." required>
+                </div>
+                <button type="button" class="btn-add" onclick="sendToWhatsApp()">تأكيد وإرسال الطلب عبر الواتساب</button>
+                <button type="button" style="background:#666; margin-top:10px" class="btn-add" onclick="closeModal()">إلغاء</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content" style="border-top: 6px solid #d4a373;">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2 style="color: #d4a373;">تم تجهيز طلبك بنجاح!</h2>
+            <p>شكراً لثقتكم في شركة الندا، سيتم التواصل معكم لتأكيد الشحن قريباً.</p>
+            <button type="button" class="btn-add" onclick="closeSuccessModal()">حسناً</button>
+        </div>
+    </div>
+
+    <header class="navbar" style="border-bottom: 3px solid #d4a373;">
+        <div class="logo" style="color: #d4a373; font-weight: bold;">
+            <i class="fas fa-jar"></i> شركة الندا للأعسال
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="ابحث عن أنواع الأعسال (سدر، حبة البركة، غذاء ملكات)...">
+            <button style="background-color: #d4a373;"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="cart-status" onclick="openCheckout()">
+            <i class="fas fa-shopping-basket fa-2x" style="color: #d4a373;"></i>
+            <span class="cart-count" id="cart-count" style="background-color: #d4a373;">0</span>
+        </div>
+    </header>
+
+    <section class="hero" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1200'); background-size: cover; background-position: center; color: white; padding: 60px 5%; text-align: center;">
+        <h1>عسل طبيعي 100% من المنحل إليك مباشرة</h1>
+        <p>شركة الندا للأعسال والمنتجات الطبيعية.. جودة تثق بها وصحة تستحقها!</p>
+    </section>
+
+    <main class="products-grid" id="products-grid"></main>
+
+    <footer style="background: #222; color: white; text-align: center; padding: 20px; margin-top: 50px; border-top: 3px solid #d4a373;">
+        <p>جميع الحقوق محفوظة &copy; 2026 | شركة الندا للأعسال</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <script>
+        // وظائف التحكم في المودال
+        function openCheckout() {
+            if(typeof cart === 'undefined' || cart.length === 0) {
+                alert("سلة الطلبات فارغة! أضف بعض المنتجات أولاً.");
+                return;
+            }
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        // دالة الإرسال للواتساب
+        function sendToWhatsApp() {
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const city = document.getElementById('userCity').value;
+            const address = document.getElementById('userAddress').value.trim();
+
+            if(!name || !phone || !address) {
+                alert("برجاء ملء كافة البيانات المطلوبة للشحن");
+                return;
+            }
+
+            // تجهيز تفاصيل المنتجات من السلة
+            let orderDetails = "";
+            let totalPrice = 0;
+            
+            cart.forEach((item, index) => {
+                orderDetails += `${index + 1}- ${item.fullName} | السعر: ${item.price} ج.م%0A`;
+                totalPrice += parseFloat(item.price) || 0;
+            });
+
+            // --- رقم شركة الندا الجديد بالكود الدولي ---
+            const myNumber = "201000367124"; 
+            
+            let message = `*طلب عسل جديد من موقع شركة الندا* 🍯%0A%0A` +
+                            `*بيانات العميل:*%0A` +
+                            `- الاسم: ${name}%0A` +
+                            `- الموبايل: ${phone}%0A` +
+                            `- المحافظة: ${city}%0A` +
+                            `- العنوان: ${address}%0A%0A` +
+                            `*المنتجات المطلوبة:*%0A${orderDetails}%0A` +
+                            `*إجمالي الحساب:* ${totalPrice} جنيه مصري`;
+
+            const whatsappUrl = `https://wa.me/${myNumber}?text=${message}`;
+
+            // فتح الواتساب للإرسال
+            window.open(whatsappUrl, '_blank');
+
+            // إتمام العملية في الموقع
+            closeModal();
+            document.getElementById('successModal').style.display = 'flex';
+            clearCart();
+        }
+
+        // تصفير السلة
+        function clearCart() {
+            if(typeof cart !== 'undefined') {
+                cart.splice(0, cart.length); 
+                document.getElementById('cart-count').innerText = "0";
+                
+                if(typeof renderProducts === 'function') {
+                    renderProducts(products); 
+                }
+            }
+        }
+    </script>
+</body>
+</html>
