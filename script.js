@@ -1,16 +1,16 @@
-// 1. قاعدة بيانات منتجات شركة الندا (الأسعار تبدأ بـ 0 ويتم سحبها تلقائياً من الشيت)
+// 1. قاعدة بيانات منتجات شركة الندا المحدثة (الأسعار تبدأ بـ 0 ويتم سحبها تلقائياً من الشيت الجديد)
 let products = [
-    { id: 1, name: "سدر", fullName: "عسل سدر جبلي فاخر - 1 كيلو", price: 0, category: "أعسال جبلية", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400" },
-    { id: 2, name: "برسيم", fullName: "عسل زهور البرسيم الطبيعي - 1 كيلو", price: 0, category: "أعسال زهور", img: "https://images.unsplash.com/photo-1558611848-73f7eb4001a1?w=400" },
-    { id: 3, name: "حبة البركة", fullName: "عسل حبة البركة الصافي - 1 كيلو", price: 0, category: "أعسال علاجية", img: "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=400" },
-    { id: 4, name: "ملكات", fullName: "غذاء ملكات النحل الصافي - عبوة 50 جرام", price: 0, category: "مكملات غذائية", img: "https://images.unsplash.com/photo-1587049352551-8d4e89134292?w=400" },
-    { id: 5, name: "موالح", fullName: "عسل زهور الموالح (الحمضيات) - 1 كيلو", price: 0, category: "أعسال زهور", img: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400" },
+    { id: 1, name: "عسل سدر", fullName: "عسل سدر جبلي فاخر - 1 كيلو", price: 0, category: "أعسال جبلية", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400" },
+    { id: 2, name: "عسل برسيم", fullName: "عسل زهور البرسيم الطبيعي - 1 كيلو", price: 0, category: "أعسال زهور", img: "https://images.unsplash.com/photo-1558611848-73f7eb4001a1?w=400" },
+    { id: 3, name: "عسل موالح", fullName: "عسل زهور الموالح (الحمضيات) - 1 كيلو", price: 0, category: "أعسال زهور", img: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400" },
+    { id: 4, name: "شهد العسل مع الشمع", fullName: "شهد العسل الطبيعي مع الشمع - 1 كيلو", price: 0, category: "منتجات الخلية", img: "https://images.unsplash.com/photo-1587049352851-8d4e89134292?w=400" },
+    { id: 5, name: "غذاء الملكات", fullName: "غذاء ملكات النحل الصافي - عبوة 5 جرام", price: 0, category: "مكملات غذائية", img: "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=400" }
 ];
 
 let cart = [];
 
-// رابط الـ CSV الخاص بجوجل شيت
-const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQII-i5Xu2MSAzVjzXEK2EfQUqBg2QOBnBy44X7H746ti2HIArJlpOc6LS0UojhGZJuExhOY4zhxPeB/pub?output=csv';
+// رابط الـ CSV الجديد الخاص بجوجل شيت اللي بتعدل منه حالياً
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIFei7d13nqOKMQz5boyyJtzo7pmFMk5MXzjc2INALklLvG7JJtimRSLo4sZjiHhPSEYrbTJ3rHHOZ/pub?output=csv';
 
 // أول ما الصفحة تفتح.. اعرض المنتجات فوراً بشكل مبدئي عشان الموقع ميبقاش فاضي
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPricesFromSheet();
 });
 
-// 2. دالة جلب الأسعار من جوجل شيت وتحديث المصفوفة
+// 2. دالة جلب الأسعار من جوجل شيت الجديد وتحديث مصفوفة المنتجات
 async function loadPricesFromSheet() {
     try {
         const response = await fetch(sheetUrl);
@@ -28,9 +28,10 @@ async function loadPricesFromSheet() {
         rows.forEach(row => {
             const columns = row.split(',');
             if (columns.length >= 2) {
-                const sheetItemName = columns[0].trim(); 
-                const sheetPrice = columns[1].trim();    
+                const sheetItemName = columns[0].trim(); // الاسم في العمود A (مثال: عسل سدر)
+                const sheetPrice = columns[1].trim();    // السعر في العمود B (مثال: 400)
                 
+                // البحث عن المنتج المطابق بالاسم وتحديث السعر تلقائياً
                 const product = products.find(p => p.name === sheetItemName);
                 if (product) {
                     product.price = parseFloat(sheetPrice) || 0;
@@ -38,15 +39,15 @@ async function loadPricesFromSheet() {
             }
         });
 
-        console.log("✅ تم تحديث أسعار أعسال الندا من جوجل شيت");
+        console.log("✅ تم تحديث أسعار أعسال الندا من شيت جوجل الجديد بنجاح");
         renderProducts(products); 
     } catch (error) {
-        console.error("❌ عطل في الاتصال بجوجل شيت:", error);
+        console.error("❌ عطل في الاتصال بجوجل شيت الجديد:", error);
         renderProducts(products); 
     }
 }
 
-// 3. دالة عرض المنتجات
+// 3. دالة عرض المنتجات بالهوية والتنسيق الجديد
 function renderProducts(productsToDisplay) {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
@@ -67,14 +68,14 @@ function renderProducts(productsToDisplay) {
     `).join('');
 }
 
-// 4. نظام البحث
+// 4. نظام البحث (يبحث في الاسم أو القسم)
 document.getElementById('searchInput')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase().trim();
     const filtered = products.filter(p => p.fullName.toLowerCase().includes(term) || p.category.toLowerCase().includes(term));
     renderProducts(filtered);
 });
 
-// 5. الإضافة للسلة
+// 5. نظام إضافة المنتجات إلى السلة
 window.addToCart = (id) => {
     const product = products.find(p => p.id === id);
     if (product) {
@@ -100,7 +101,7 @@ function updateCartCount() {
     }
 }
 
-// 6. إرسال الطلب للواتساب (تم تقفيل الدالة وحل المشكلة)
+// 6. إرسال بيانات الطلب والشحن إلى الواتساب بتنسيق منسق وفخم
 window.sendToWhatsApp = () => {
     const name = document.getElementById('userName').value.trim();
     const phone = document.getElementById('userPhone').value.trim();
@@ -139,7 +140,7 @@ window.sendToWhatsApp = () => {
     const whatsappUrl = `https://wa.me/${myPhone}?text=${message}`;
     window.open(whatsappUrl, '_blank');
 
-    // إغلاق المودال وتصفير السلة
+    // إغلاق النوافذ المنبثقة وتفريغ السلة بعد نجاح الطلب
     document.getElementById('checkoutModal').style.display = 'none';
     document.getElementById('successModal').style.display = 'flex';
     cart = [];
