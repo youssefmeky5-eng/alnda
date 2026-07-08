@@ -10,40 +10,47 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        /* تنسيق المودال (نافذة بيانات الاستلام) */
+        /* تنسيق المودال (نافذة بيانات الاستلام) بشكل احترافي */
         .modal {
             display: none; 
             position: fixed; 
             z-index: 2000; 
             left: 0; top: 0; width: 100%; height: 100%; 
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(45, 34, 23, 0.6); /* خلفية بنية دافئة متناسقة مع العسل */
             align-items: center; 
             justify-content: center;
+            backdrop-filter: blur(3px);
         }
         .modal-content {
             background-color: #fff;
-            margin: 10% auto;
             padding: 25px;
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-in-out;
         }
         .form-group { margin-bottom: 15px; text-align: right; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
-        
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #3d2f22; }
+        .form-group input, .form-group select { 
+            width: 100%; padding: 12px; border: 1px solid rgba(212, 163, 115, 0.4); 
+            border-radius: 8px; font-family: inherit; box-sizing: border-box; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #d4a373;
+            background-color: #fffdec; /* لون بيج عسلي خفيف عند التركيز */
+        }
         .success-icon {
             font-size: 4rem;
-            color: #d4a373; /* لون ذهبي عسلي مناسب للهوية الجديدة */
+            color: #d4a373; 
             margin-bottom: 15px;
             display: block;
         }
         .btn-add {
-            background-color: #d4a373; /* لون عسلي دافئ */
+            background-color: #d4a373; 
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -55,14 +62,33 @@
         .btn-add:hover {
             background-color: #bfa360;
         }
+        .btn-modal-close {
+            background: #666; color: white; padding: 12px; border: none; 
+            border-radius: 8px; cursor: pointer; width: 100%; 
+            font-size: 1rem; font-weight: bold; margin-top: 10px; transition: 0.3s;
+        }
+        .btn-modal-close:hover { background: #444; }
+
+        /* تنسيق إضافي لشبكة المنتجات لتظهر بشكل متناسق مع الألوان العسلية الدافئة */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px 5%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
     <div id="checkoutModal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-truck"></i> بيانات الشحن والاستلام</h2>
-            <p>من فضلك أدخل بياناتك لتأكيد طلب العسل</p>
+        <div class="modal-content" style="border-top: 6px solid #d4a373;">
+            <h2><i class="fas fa-truck" style="color: #d4a373;"></i> بيانات الشحن والاستلام</h2>
+            <p style="color: #666; margin-bottom: 20px;">من فضلك أدخل بياناتك لتأكيد طلب العسل</p>
             <form id="orderForm">
                 <div class="form-group">
                     <label>الاسم بالكامل:</label>
@@ -79,15 +105,18 @@
                         <option value="الدقهلية">الدقهلية</option>
                         <option value="الإسكندرية">الإسكندرية</option>
                         <option value="الجيزة">الجيزة</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="الشرقية">الشرقية</option>
+                        <option value="المنوفية">المنوفية</option>
                         <option value="أخرى">محافظة أخرى</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>العنوان بالتفصيل:</label>
-                    <input type="text" id="userAddress" placeholder="اسم الشارع، رقم العمارة..." required>
+                    <input type="text" id="userAddress" placeholder="اسم الشارع، رقم العمارة، الدور..." required>
                 </div>
                 <button type="button" class="btn-add" onclick="sendToWhatsApp()">تأكيد وإرسال الطلب عبر الواتساب</button>
-                <button type="button" style="background:#666; margin-top:10px" class="btn-add" onclick="closeModal()">إلغاء</button>
+                <button type="button" class="btn-modal-close" onclick="closeModal()">إلغاء</button>
             </form>
         </div>
     </div>
@@ -96,112 +125,48 @@
         <div class="modal-content" style="border-top: 6px solid #d4a373;">
             <i class="fas fa-check-circle success-icon"></i>
             <h2 style="color: #d4a373;">تم تجهيز طلبك بنجاح!</h2>
-            <p>شكراً لثقتكم في شركة الندا، سيتم التواصل معكم لتأكيد الشحن قريباً.</p>
+            <p style="color: #555; line-height: 1.6;">شكراً لثقتكم في شركة الندا، سيتم توجيهك الآن للواتساب، وسيتم التواصل معكم لتأكيد الشحن قريباً.</p>
             <button type="button" class="btn-add" onclick="closeSuccessModal()">حسناً</button>
         </div>
     </div>
 
-    <header class="navbar" style="border-bottom: 3px solid #d4a373;">
-        <div class="logo" style="color: #d4a373; font-weight: bold;">
-            <i class="fas fa-jar"></i> شركة الندا للأعسال
+    <header class="navbar" style="border-bottom: 3px solid #d4a373; display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <div class="logo" style="color: #d4a373; font-weight: bold; display: flex; align-items: center; gap: 12px; font-size: 1.3rem;">
+            <img src="images/logo.png" alt="لوجو شركة الندا" style="height: 50px; width: 50px; object-fit: contain; vertical-align: middle;">
+            <span>شركة الندا للأعسال</span>
         </div>
         
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="ابحث عن أنواع الأعسال (سدر، حبة البركة، غذاء ملكات)...">
-            <button style="background-color: #d4a373;"><i class="fas fa-search"></i></button>
+        <div class="search-container" style="display: flex; align-items: center; border: 2px solid #d4a373; border-radius: 8px; overflow: hidden; background: #fff; width: 35%;">
+            <input type="text" id="searchInput" placeholder="ابحث عن أنواع الأعسال (سدر، موالح، شهد)..." style="border: none; padding: 10px; width: 100%; font-family: inherit; outline: none;">
+            <button style="background-color: #d4a373; color: white; border: none; padding: 10px 15px; cursor: pointer;"><i class="fas fa-search"></i></button>
         </div>
 
-        <div class="cart-status" onclick="openCheckout()">
+        <div class="cart-status" onclick="openCheckoutModal()" style="position: relative; cursor: pointer;">
             <i class="fas fa-shopping-basket fa-2x" style="color: #d4a373;"></i>
-            <span class="cart-count" id="cart-count" style="background-color: #d4a373;">0</span>
+            <span class="cart-count" id="cart-count" style="background-color: #d4a373; color: white; position: absolute; top: -5px; left: -10px; border-radius: 50%; padding: 2px 7px; font-size: 0.8rem; font-weight: bold;">0</span>
         </div>
     </header>
 
-    <section class="hero" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1200'); background-size: cover; background-position: center; color: white; padding: 60px 5%; text-align: center;">
-        <h1>عسل طبيعي 100% من المنحل إليك مباشرة</h1>
-        <p>شركة الندا للأعسال والمنتجات الطبيعية.. جودة تثق بها وصحة تستحقها!</p>
+    <section class="hero" style="background: linear-gradient(rgba(45, 34, 23, 0.65), rgba(45, 34, 23, 0.65)), url('images/shahd.jpg'); background-size: cover; background-position: center; color: white; padding: 80px 5%; text-align: center;">
+        <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 15px;">عسل طبيعي 100% من المنحل إليك مباشرة</h1>
+        <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto; opacity: 0.95;">شركة الندا للأعسال والمنتجات الطبيعية.. جودة تثق بها وصحة تستحقها!</p>
     </section>
 
     <main class="products-grid" id="products-grid"></main>
 
-    <footer style="background: #222; color: white; text-align: center; padding: 20px; margin-top: 50px; border-top: 3px solid #d4a373;">
-        <p>جميع الحقوق محفوظة &copy; 2026 | شركة الندا للأعسال</p>
+    <footer style="background: #2d2217; color: #f4ebd0; text-align: center; padding: 25px; margin-top: 50px; border-top: 4px solid #d4a373; font-size: 0.95rem;">
+        <p style="margin: 0;">جميع الحقوق محفوظة &copy; 2026 | شركة الندا للأعسال والمنتجات الطبيعية</p>
     </footer>
 
     <script src="script.js"></script>
 
     <script>
-        // وظائف التحكم في المودال
-        function openCheckout() {
-            if(typeof cart === 'undefined' || cart.length === 0) {
+        function openCheckoutModal() {
+            if (typeof cart === 'undefined' || cart.length === 0) {
                 alert("سلة الطلبات فارغة! أضف بعض المنتجات أولاً.");
                 return;
             }
             document.getElementById('checkoutModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('checkoutModal').style.display = 'none';
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModal').style.display = 'none';
-        }
-
-        // دالة الإرسال للواتساب
-        function sendToWhatsApp() {
-            const name = document.getElementById('userName').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
-            const city = document.getElementById('userCity').value;
-            const address = document.getElementById('userAddress').value.trim();
-
-            if(!name || !phone || !address) {
-                alert("برجاء ملء كافة البيانات المطلوبة للشحن");
-                return;
-            }
-
-            // تجهيز تفاصيل المنتجات من السلة
-            let orderDetails = "";
-            let totalPrice = 0;
-            
-            cart.forEach((item, index) => {
-                orderDetails += `${index + 1}- ${item.fullName} | السعر: ${item.price} ج.م%0A`;
-                totalPrice += parseFloat(item.price) || 0;
-            });
-
-            // --- رقم شركة الندا الجديد بالكود الدولي ---
-            const myNumber = "201000367124"; 
-            
-            let message = `*طلب عسل جديد من موقع شركة الندا* 🍯%0A%0A` +
-                            `*بيانات العميل:*%0A` +
-                            `- الاسم: ${name}%0A` +
-                            `- الموبايل: ${phone}%0A` +
-                            `- المحافظة: ${city}%0A` +
-                            `- العنوان: ${address}%0A%0A` +
-                            `*المنتجات المطلوبة:*%0A${orderDetails}%0A` +
-                            `*إجمالي الحساب:* ${totalPrice} جنيه مصري`;
-
-            const whatsappUrl = `https://wa.me/${myNumber}?text=${message}`;
-
-            // فتح الواتساب للإرسال
-            window.open(whatsappUrl, '_blank');
-
-            // إتمام العملية في الموقع
-            closeModal();
-            document.getElementById('successModal').style.display = 'flex';
-            clearCart();
-        }
-
-        // تصفير السلة
-        function clearCart() {
-            if(typeof cart !== 'undefined') {
-                cart.splice(0, cart.length); 
-                document.getElementById('cart-count').innerText = "0";
-                
-                if(typeof renderProducts === 'function') {
-                    renderProducts(products); 
-                }
-            }
         }
     </script>
 </body>
